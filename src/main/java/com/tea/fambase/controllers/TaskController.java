@@ -42,7 +42,7 @@ public class TaskController {
 
 
     @GetMapping("/delete")
-    public String deleteTask(@RequestParam("id") String id, Model model) {
+    public String deleteTask(@RequestParam("id") String id) {
         Task task = taskService.findById(Long.parseLong(id));
         taskService.delete(task);
         return "redirect:/all";
@@ -63,8 +63,8 @@ public class TaskController {
 
 
     @GetMapping("/alltasks")
-    public String showEventsPage(Model model) {
-        model.addAttribute("tasks", taskService.findAll());
+    public String showEventsPage(Model model, @AuthenticationPrincipal User currentUser) {
+        model.addAttribute("tasks", taskService.findByUserFamily(currentUser.getFamily()));
         return "tasks/chores";
     }
 

@@ -27,7 +27,7 @@ public class ShoppingItemController {
     }
 
     @GetMapping("/new")
-    public String showAddShoppingItemForm(Model model, @AuthenticationPrincipal User currentUser) {
+    public String showAddShoppingItemForm(Model model) {
         model.addAttribute("shoppingItem", new ShoppingItem());
         return "shopping-items/addshoppingItems";
     }
@@ -42,15 +42,15 @@ public class ShoppingItemController {
 
 
     @GetMapping("/delete")
-    public String deleteShoppingItem(@RequestParam("id") String id, Model model) {
+    public String deleteShoppingItem(@RequestParam("id") String id) {
         ShoppingItem shoppingItem = shoppingItemService.findById(Long.parseLong(id));
         shoppingItemService.delete(shoppingItem);
         return "redirect:/all";
     }
 
     @GetMapping("/allshoppingItems")
-    public String showEventsPage(Model model) {
-        model.addAttribute("shoppingItems", shoppingItemService.findAll());
+    public String showEventsPage(Model model, @AuthenticationPrincipal User currentUser) {
+        model.addAttribute("shoppingItems", shoppingItemService.findByUserFamily(currentUser.getFamily()));
         return "shopping-items/shopping-list";
     }
 

@@ -56,7 +56,7 @@ public class EventController {
     }
 
     @PostMapping({"/new", "/new/{startDate}/{endDate}"})
-    public String addEvent(Model model, Event event, @AuthenticationPrincipal User currentUser) {
+    public String addEvent(Event event, @AuthenticationPrincipal User currentUser) {
         if (Objects.equals(event.getName(), ""))
             event.setName("Unnamed");
         if (Objects.equals(event.getType(), ""))
@@ -72,15 +72,15 @@ public class EventController {
     }
 
     @GetMapping("/delete")
-    public String deleteEvent(@RequestParam("id") String id, Model model) {
+    public String deleteEvent(@RequestParam("id") String id) {
         Event event = eventService.findById(Long.parseLong(id));
         eventService.delete(event);
         return "redirect:/events/allevents";
     }
 
     @GetMapping("/allevents")
-    public String showEventsPage(Model model) {
-        model.addAttribute("events", eventService.findAll());
+    public String showEventsPage(Model model, @AuthenticationPrincipal User currentUser) {
+        model.addAttribute("events", eventService.findByUserFamily(currentUser.getFamily()));
 
         return "events/events";
     }
