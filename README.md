@@ -1,7 +1,7 @@
 # FamBase
 Family planner app.
 
-## to run:
+## Running instructions
 
 ### download the file:
 ```bash
