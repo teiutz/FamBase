@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Task - Yate Fam</title>
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co/vxwxYx1/fam-Base-Icon.png">
+
+    <style>
+        :root {
+            --primary-dark: #401F3E;
+            --primary-color: #732f65;
+            --card-bg: rgb(255, 232, 230);
+            --accent-bg: rgba(115, 47, 101, 0.68);
+            --text-main: #401F3E;
+            --text-muted: #5A4B51;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --shadow-subtle: 0 4px 12px rgba(64, 31, 62, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            color: var(--primary-color);
+            background: radial-gradient(circle, rgba(236, 205, 205, 1) 25%, rgba(186, 112, 182, 1) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* --- HEADER --- */
+        header {
+            width: 100%;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            background: radial-gradient(circle, rgba(236, 205, 205, 0.9) 8%, rgba(186, 112, 182, 0.9) 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .home-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-subtle);
+            transition: transform 0.2s;
+        }
+
+        .home-btn:hover { transform: scale(1.05); }
+        .home-btn img { width: 24px; height: 24px; }
+
+        .brand-logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            background-color: var(--card-bg);
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-subtle);
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover {
+            background-color: #ffd4d1;
+        }
+
+        /* --- FORM CONTAINER / LAYOUT --- */
+        .form-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+            padding: 24px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: var(--shadow-subtle);
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(98, 68, 91, 0.2);
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+        }
+
+        input[type="text"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(98, 68, 91, 0.2);
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            border-color: var(--primary-color);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-action {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn-action:disabled {
+            background-color: rgba(152, 59, 131, 0.56);
+            cursor: not-allowed;
+        }
+
+        .btn-action:not(:disabled):hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="header-left">
+        <a href="/" th:if="${#authorization.expression('isAuthenticated()')}">
+            <div class="home-btn">
+                <img src="https://i.ibb.co/5TR58kn/home.png" alt="Home">
+            </div>
+        </a>
+        <div class="brand-logo">
+            <img src="https://i.ibb.co/Vvp7kp1/famge-removebg-preview.png" alt="FamBase Logo">
+        </div>
+    </div>
+
+    <div class="header-right">
+        <a href="/login" class="nav-link" th:if="${#authorization.expression('!isAuthenticated()')}">Login</a>
+        <a href="/register" class="nav-link" th:if="${#authorization.expression('!isAuthenticated()')}">Register</a>
+        <a href="/logout" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Logout</a>
+    </div>
+</header>
+
+<!-- FORM BODY -->
+<div class="form-wrapper">
+    <div class="card">
+        <div class="card-title">Add New Task</div>
+        <form th:object="${task}" method="post">
+            <div>
+                <label for="name">Name:</label>
+                <input th:field="*{name}" id="name" type="text" placeholder="Enter task name">
+            </div>
+
+            <div>
+                <label for="description">Description:</label>
+                <textarea th:field="*{description}" id="description" placeholder="Enter description (optional)"></textarea>
+            </div>
+
+            <div>
+                <label for="deadline">Deadline:</label>
+                <input th:field="*{deadline}" id="deadline" type="date">
+            </div>
+
+            <div>
+                <label for="importance">Task Importance:</label>
+                <select th:field="*{importance}" id="importance">
+                    <option value="must do">Must go!</option>
+                    <option value="high priority">High Priority</option>
+                    <option value="medium priority">Medium Priority</option>
+                    <option value="optional">Optional</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="taskType">Task Type:</label>
+                <select th:field="*{taskType}" id="taskType">
+                    <option value="HouseholdChores">Household Chores</option>
+                    <option value="Errands">Errands</option>
+                    <option value="FamilyNPersonal">Family & Personal</option>
+                    <option value="HomeProjectsNMaintenance">Home Projects & Maintenance</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submit" class="btn-action" disabled>Add Task!</button>
+        </form>
+    </div>
+</div>
+
+<!-- SCRIPT -->
+<script defer th:inline="javascript">
+    const taskName = document.getElementById("name"),
+        deadline = document.getElementById("deadline"),
+        importance = document.getElementById("importance"),
+        taskType = document.getElementById("taskType"),
+        submitBtn = document.getElementById("submit");
+
+    function updateSubmit() {
+        if (taskName.value.trim() === "" || deadline.value === "" || importance.value === "" || taskType.value === "") {
+            submitBtn.disabled = true;
+            return;
+        }
+        submitBtn.disabled = false;
+    }
+
+    taskName.addEventListener("input", updateSubmit);
+    deadline.addEventListener("change", updateSubmit);
+    importance.addEventListener("change", updateSubmit);
+    taskType.addEventListener("change", updateSubmit);
+
+    updateSubmit();
+</script>
+</body>
+</html>

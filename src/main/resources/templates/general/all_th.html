@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View All</title>
+</head>
+<body>
+<h2>All Events</h2>
+<div th:each="event : ${events}">
+    <div>
+        <span>ID: </span><span th:text="${event.id}"></span>
+    </div>
+    <div>
+        <span>Name: </span><span th:text="${event.name}"></span>
+    </div>
+    <div>
+        <span>Start Date: </span><span th:text="${event.startDate}"></span>
+    </div>
+    <div>
+        <span>End Date: </span><span th:text="${event.endDate}"></span>
+    </div>
+    <div>
+        <span>Event Type: </span><span th:text="${event.type}"></span>
+    </div>
+    <div>
+        <span>Importance: </span><span th:text="${event.importance}"></span>
+    </div>
+    <br>
+</div>
+
+<h2>All Tasks</h2>
+<div th:each="task : ${tasks}">
+    <div>
+        <span>ID: </span><span th:text="${task.id}"></span>
+    </div>
+    <div>
+        <span>Name: </span><span th:text="${task.name}"></span>
+    </div>
+    <div>
+        <span>Description: </span><span th:text="${task.description}"></span>
+    </div><div>
+        <span>Deadline: </span><span th:text="${task.deadline}"></span>
+    </div>
+    <div>
+        <span>Importance: </span><span th:text="${task.importance}"></span>
+    </div>
+    <div>
+        <span>Is done: </span><span th:text="${task.status}"></span>
+    </div>
+    <br>
+</div>
+
+<h2>All Shopping Items</h2>
+<div th:each="shoppingItem : ${shoppingItems}">
+    <div>
+        <span>ID: </span><span th:text="${shoppingItem.id}"></span>
+    </div>
+    <div>
+        <span>Name: </span><span th:text="${shoppingItem.name}"></span>
+    </div>
+    <div>
+        <span>Quantity: </span><span th:text="${shoppingItem.quantity}"></span>
+    </div>
+    <div>
+        <span>Store: </span><span th:text="${shoppingItem.store}"></span>
+    </div>
+    <div>
+        <span>Importance: </span><span th:text="${shoppingItem.importance}"></span>
+    </div>
+    <div>
+        <span>Is bought: </span><span th:text="${shoppingItem.status}"></span>
+    </div>
+    <br>
+</div>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grouped Tasks</title>
+    <link href="https://i.ibb.co/vxwxYx1/fam-Base-Icon.png" rel="icon" type="image/x-icon">
+    <style>
+        :root {
+            --primary-dark: #401F3E;
+            --primary-color: #732f65;
+            --card-bg: rgb(255, 232, 230);
+            --accent-bg: rgba(115, 47, 101, 0.68);
+            --text-main: #401F3E;
+            --text-muted: #5A4B51;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --shadow-subtle: 0 4px 12px rgba(64, 31, 62, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            color: var(--primary-color);
+            background: radial-gradient(circle, rgba(236, 205, 205, 1) 25%, rgba(186, 112, 182, 1) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        header {
+            width: 100%;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            background: radial-gradient(circle, rgba(236, 205, 205, 0.9) 8%, rgba(186, 112, 182, 0.9) 100%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .home-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-subtle);
+            transition: transform 0.2s;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .home-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .brand-logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            background-color: var(--card-bg);
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-subtle);
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover {
+            background-color: #ffd4d1;
+        }
+
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding: 24px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .tasks-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(98, 68, 91, 0.2);
+        }
+
+        .scrollable-list {
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .scrollable-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background-color: rgba(98, 68, 91, 0.2);
+            border-radius: 10px;
+        }
+
+        #square-before-task {
+            width: 35px;
+            height: 35px;
+            margin: 0 12px 0 0;
+            border-radius: 10px;
+            background-color: rgba(170, 52, 165, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        li {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .task-details {
+            flex-grow: 1;
+        }
+
+        li .bold {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+            padding-left: 10px;
+        }
+
+        @media (max-width: 900px) {
+            .tasks-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <a href="/" th:if="${#authorization.expression('isAuthenticated()')}">
+            <div class="home-btn">
+                <img alt="Home" src="https://i.ibb.co/5TR58kn/home.png">
+            </div>
+        </a>
+        <div class="brand-logo">
+            <img alt="FamBase Logo" src="https://i.ibb.co/Vvp7kp1/famge-removebg-preview.png">
+        </div>
+    </div>
+
+    <div class="header-right">
+        <a class="nav-link" href="/login" th:if="${#authorization.expression('!isAuthenticated()')}">Login</a>
+        <a class="nav-link" href="/register" th:if="${#authorization.expression('!isAuthenticated()')}">Register</a>
+        <a class="nav-link" href="/logout" th:if="${#authorization.expression('isAuthenticated()')}">Logout</a>
+    </div>
+</header>
+
+<div class="dashboard-container">
+    <div class="tasks-grid">
+        <!-- Household Chores -->
+        <section class="card">
+            <div class="card-title">Household Chores</div>
+            <div class="scrollable-list">
+                <div th:if="${#lists.isEmpty(household)}" style="text-align: center; color: var(--text-muted); padding: 15px; font-style: italic;">
+                    No tasks found.
+                </div>
+                <ul>
+                    <li th:each="task : ${household}">
+                        <div id="square-before-task">
+                            <span class="bold" th:if="${task.status}">✅</span>
+                            <span class="bold" th:if="${!task.status}">❌</span>
+                        </div>
+                        <div class="task-details">
+                            <span class="bold" th:text="${task.name}"></span>,
+                            Deadline: <span class="bold" th:text="${task.deadline}"></span>,
+                            Importance: <span class="bold" th:text="${task.importance}"></span>
+                        </div>
+                        <div class="item-actions">
+                            <a th:href="@{/tasks/edit/{id}(id=${task.id})}">✎</a>
+                            <a th:href="@{|/tasks/delete?id=${task.id}|}">🗑️</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Errands -->
+        <section class="card">
+            <div class="card-title">Errands</div>
+            <div class="scrollable-list">
+                <div th:if="${#lists.isEmpty(errands)}" style="text-align: center; color: var(--text-muted); padding: 15px; font-style: italic;">
+                    No tasks found.
+                </div>
+                <ul>
+                    <li th:each="task : ${errands}">
+                        <div id="square-before-task">
+                            <span class="bold" th:if="${task.status}">✅</span>
+                            <span class="bold" th:if="${!task.status}">❌</span>
+                        </div>
+                        <div class="task-details">
+                            <span class="bold" th:text="${task.name}"></span>,
+                            Deadline: <span class="bold" th:text="${task.deadline}"></span>,
+                            Importance: <span class="bold" th:text="${task.importance}"></span>,
+                            Type: <span class="bold" th:text="${task.taskType}"></span>
+                        </div>
+                        <div class="item-actions">
+                            <a th:href="@{/tasks/edit/{id}(id=${task.id})}">✎</a>
+                            <a th:href="@{|/tasks/delete?id=${task.id}|}">🗑️</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Family & Personal -->
+        <section class="card">
+            <div class="card-title">Family & Personal</div>
+            <div class="scrollable-list">
+                <div th:if="${#lists.isEmpty(family)}" style="text-align: center; color: var(--text-muted); padding: 15px; font-style: italic;">
+                    No tasks found.
+                </div>
+                <ul>
+                    <li th:each="task : ${family}">
+                        <div id="square-before-task">
+                            <span class="bold" th:if="${task.status}">✅</span>
+                            <span class="bold" th:if="${!task.status}">❌</span>
+                        </div>
+                        <div class="task-details">
+                            <span class="bold" th:text="${task.name}"></span>,
+                            Deadline: <span class="bold" th:text="${task.deadline}"></span>,
+                            Importance: <span class="bold" th:text="${task.importance}"></span>,
+                            Type: <span class="bold" th:text="${task.taskType}"></span>
+                        </div>
+                        <div class="item-actions">
+                            <a th:href="@{/tasks/edit/{id}(id=${task.id})}">✎</a>
+                            <a th:href="@{|/tasks/delete?id=${task.id}|}">🗑️</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Home Projects & Maintenance -->
+        <section class="card">
+            <div class="card-title">Home Projects & Maintenance</div>
+            <div class="scrollable-list">
+                <div th:if="${#lists.isEmpty(maintenance)}" style="text-align: center; color: var(--text-muted); padding: 15px; font-style: italic;">
+                    No tasks found.
+                </div>
+                <ul>
+                    <li th:each="task : ${maintenance}">
+                        <div id="square-before-task">
+                            <span class="bold" th:if="${task.status}">✅</span>
+                            <span class="bold" th:if="${!task.status}">❌</span>
+                        </div>
+                        <div class="task-details">
+                            <span class="bold" th:text="${task.name}"></span>,
+                            Deadline: <span class="bold" th:text="${task.deadline}"></span>,
+                            Importance: <span class="bold" th:text="${task.importance}"></span>,
+                            Type: <span class="bold" th:text="${task.taskType}"></span>
+                        </div>
+                        <div class="item-actions">
+                            <a th:href="@{/tasks/edit/{id}(id=${task.id})}">✎</a>
+                            <a th:href="@{|/tasks/delete?id=${task.id}|}">🗑️</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</div>
+
+</body>
+</html>

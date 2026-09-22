@@ -1,0 +1,46 @@
+
+<div th:fragment="top" xmlns:th="http://www.thymeleaf.org">
+    <div class="header">
+        <span class="header-text" style="width: 30vw">YATE FAM</span>
+    </div>
+    <br>
+    <br>
+    <center>
+        <nav id="buttons">
+            <div class="homeThing">
+                <a href="/" th:if="${#authorization.expression('isAuthenticated()')}">Home</a>
+                <br>
+                <a href="/admin" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Add User</a>
+                <br>
+                <br>
+            </div>
+            <div class="homeThing">
+                <a href="/login" th:if="${#authorization.expression('!isAuthenticated()')}">Login</a>
+                <a href="/register" th:if="${#authorization.expression('!isAuthenticated()')}">Register</a>
+                <a href="/logout" th:if="${#authorization.expression('isAuthenticated()')}">Logout</a>
+                <br>
+                <br>
+            </div>
+
+            <div style="display: flex; transform: translateX(-50%); left: 50%; position: absolute;">
+                <div class="homeThing" style="margin: 10px">
+                    <a href="/all" th:if="${#authorization.expression('isAuthenticated()')}">View all</a>
+                </div>
+                <br>
+                <br>
+                <div class="homeThing" style="margin: 10px">
+                    <a href="events/new" th:if="${#authorization.expression('isAuthenticated()')}">Add new event</a>
+                    <br>
+                    <a href="events/delete" th:if="${#authorization.expression('isAuthenticated()')}">Delete Event</a>
+                    <br>
+                    <a href="shoppingItems/new" th:if="${#authorization.expression('isAuthenticated()')}">Add new Shopping Item</a>
+                    <br>
+                    <a href="tasks/new" th:if="${#authorization.expression('isAuthenticated()')}">Add new task</a>
+                </div>
+            </div>
+
+        </nav>
+    </center>
+</div>
+
+  

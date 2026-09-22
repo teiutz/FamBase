@@ -1,0 +1,15 @@
+
+.git
+.gitignore
+
+
+.idea
+
+target
+
+.DS_Store
+
+*.log
+logs
+
+README.md

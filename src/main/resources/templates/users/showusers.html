@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Users</title>
+</head>
+<body>
+<div id="header">
+    <a href="/static" th:if="${#authorization.expression('isAuthenticated()')}">
+        <div class="headerDiv" id="homeButtonDiv"><img id="homeButton" src="https://i.ibb.co/5TR58kn/home.png"></div>
+    </a>
+    <img id="famBaseImage" src="https://i.ibb.co/Vvp7kp1/famge-removebg-preview.png">
+    <div id="accountConnection">
+        <a href="/login" th:if="${#authorization.expression('!isAuthenticated()')}"><div class="headerDiv"><verticallyCentered>Login</verticallyCentered></div></a>
+        <a href="/register" th:if="${#authorization.expression('!isAuthenticated()')}"><div class="headerDiv"><verticallyCentered>Register</verticallyCentered></div></a>
+        <a href="/logout" th:if="${#authorization.expression('isAuthenticated()')}"><div class="headerDiv"><verticallyCentered>Logout</verticallyCentered></div></a>
+    </div>
+</div>
+
+<div id="users">
+    <div class="user" th:each="user : ${showusers}">
+        <img class="profileImages" th:if="${user.gender == 'Female'}" src="https://icons.iconarchive.com/icons/iconsmind/outline/512/Girl-icon.png">
+        <img class="profileImages" th:if="${user.gender == 'Male'}" src="https://icons.iconarchive.com/icons/iconsmind/outline/512/Boy-icon.png"><br>
+        <div class="username" th:text="${user.username}"></div>
+    </div>
+</div>
+</body>
+<style>
+    #section-header {
+        position: relative;
+        top: 0;
+        left: 20px;
+        background-color: #C5AFAF;
+        padding: 0 10px;
+        font-size: 24px;
+        color: #401F3E;
+        margin-bottom: 10px;
+    }
+
+    #chores-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #C5AFAF;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: inset 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+        width: 50%;
+
+        transform: translate(-50%, -50%);
+        position: relative;
+        left: 50%;
+        top: 30%;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        color: rgb(98, 68, 91);
+        font-family: Calibri;
+        background: radial-gradient(circle, rgba(247,238,238,1) 8%, rgba(240,172,237,1) 100%);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+
+        display: block;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    #header {
+        display: flex;
+        height: 100px;
+        background: radial-gradient(circle, rgba(236,205,205,1) 8%, rgba(186,112,182,1) 100%);
+
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+    }
+
+    .headerDiv {
+        width: 90px;
+        height: 40px;
+        border-radius: 10px;
+        border: 0px rgba(0, 0, 0, 0.25) solid;
+        padding: 7.5px;
+
+        font-size: 24px;
+        color: #401F3E;
+
+        position: relative;
+        transform: translateY(-50%);
+        top: 43%;
+
+        text-align: center;
+
+        margin: 5px;
+        display: block;
+    }
+    #homeButtonDiv {
+        left: 13px;
+        width: 45px;
+        border-radius: 50%;
+    }
+    #homeButton {
+        width: 45px;
+        height: 45px;
+        position: relative;
+        top: -2px;
+    }
+
+    verticallyCentered {
+        position: relative;
+        transform: translateY(-50%);
+        display: block;
+        top: 50%;
+    }
+
+
+    #famBaseImage {
+        transform: translateX(-50%);
+        position: absolute;
+        top: -30px;
+        left: 50%;
+
+        width: 225px;
+
+
+        border-radius: 20px;
+        /*
+        background-color: #f7eef0;
+        box-shadow: inset 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+        */
+    }
+
+    #accountConnection {
+        display: flex;
+        transform: translateX(-100%);
+        left: 99.5%;
+        position: absolute;
+        height: 100px;
+    }
+
+    #formBody {
+        transform: translate(-50%, -50%);
+        position: absolute;
+        left: 50%;
+        top: 40%;
+
+        background-color: aliceblue;
+        border-radius: 20px;
+        display: block;
+        width: 300px;
+        height: 300px;
+
+        position: relative;
+    }
+
+    #inputs {
+        transform: translate(-50%, -50%);
+        position: absolute;
+        left: 50%;
+        top: 60%;
+    }
+    input {
+        margin-bottom: 1vh;
+    }
+
+    h1 {
+        position: relative;
+        top: 10%;
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 10px;
+    }
+
+    input:last-of-type {
+        transform: translateX(-50%);
+        left: 50%;
+        position: relative;
+    }
+
+    .profileImages {
+        width: 20vh;
+        height: 20vh;
+        filter:
+                invert(100%)
+                sepia(100%)
+                saturate(10000%)
+                hue-rotate(274deg)
+                brightness(50%);
+    }
+
+    .username {
+        font-weight: bolder;
+        font-size: 3vh;
+        color: #401F3E;
+        text-align: center;
+        width: 20vh;
+    }
+
+    .user {
+        margin: 5vh;
+        width: 20vh;
+    }
+    #users {
+        position: absolute;
+        left: 50%;
+        top: 15vh;
+        transform: translateX(-50%);
+        width: 120vh;
+        display: flex;
+        flex-wrap: wrap;
+    }
+</style>
+</html>

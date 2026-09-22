@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task List - Update Shopping Item</title>
+    <link rel="icon" type="image/x-icon" href="https://i.ibb.co/vxwxYx1/fam-Base-Icon.png">
+
+    <style>
+        :root {
+            --primary-dark: #401F3E;
+            --primary-color: #62445B;
+            --card-bg: #FFE8E6;
+            --accent-bg: #7E5A5A;
+            --text-muted: #5A4B51;
+            --radius-lg: 20px;
+            --radius-md: 10px;
+            --shadow-subtle: 0 4px 12px rgba(64, 31, 62, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            color: var(--primary-color);
+            background: radial-gradient(circle, rgba(236, 205, 205, 1) 25%, rgba(186, 112, 182, 1) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* --- HEADER --- */
+        header {
+            width: 100%;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            background: radial-gradient(circle, rgba(236, 205, 205, 0.9) 8%, rgba(186, 112, 182, 0.9) 100%);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .home-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-subtle);
+            transition: transform 0.2s;
+        }
+
+        .home-btn:hover { transform: scale(1.05); }
+        .home-btn img { width: 24px; height: 24px; }
+
+        .brand-logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            background-color: var(--card-bg);
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-subtle);
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover { background-color: #ffd4d1; }
+
+        /* --- MAIN FORM CONTAINER --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+        }
+
+        .form-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .form-card h2 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            text-align: center;
+            margin-bottom: 24px;
+            border-bottom: 2px solid rgba(98, 68, 91, 0.2);
+            padding-bottom: 8px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(98, 68, 91, 0.3);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: var(--primary-dark);
+            background: #ffffff;
+        }
+
+        .checkbox-group {
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-dark);
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            margin-top: 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-subtle);
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+    <div class="header-left">
+        <a href="/" th:if="${#authorization.expression('isAuthenticated()')}">
+            <div class="home-btn">
+                <img src="https://i.ibb.co/5TR58kn/home.png" alt="Home">
+            </div>
+        </a>
+        <div class="brand-logo">
+            <img src="https://i.ibb.co/Vvp7kp1/famge-removebg-preview.png" alt="FamBase Logo">
+        </div>
+    </div>
+
+    <div class="header-right">
+        <a href="/login" class="nav-link" th:if="${#authorization.expression('!isAuthenticated()')}">Login</a>
+        <a href="/register" class="nav-link" th:if="${#authorization.expression('!isAuthenticated()')}">Register</a>
+        <a href="/logout" class="nav-link" th:if="${#authorization.expression('isAuthenticated()')}">Logout</a>
+    </div>
+</header>
+
+<!-- FORM SECTION -->
+<div class="main-container">
+    <div class="form-card">
+        <h2>Update Shopping Item</h2>
+        <form th:action="@{/shoppingItems/update}" method="post">
+            <input type="hidden" name="id" th:value="${shoppingItem.id}">
+
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" th:value="${shoppingItem.name}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" name="quantity" th:value="${shoppingItem.quantity}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="store">Store</label>
+                <input type="text" id="store" name="store" th:value="${shoppingItem.store}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="importance">Item Importance</label>
+                <select id="importance" name="importance" th:value="${shoppingItem.importance}" required>
+                    <option value="must buy">Must go!</option>
+                    <option value="high priority">High Priority</option>
+                    <option value="medium priority">Medium Priority</option>
+                    <option value="optional">Optional</option>
+                </select>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="status" name="status" th:checked="${shoppingItem.status}" th:value="${shoppingItem.status}">
+                <label for="status">Completed Status</label>
+            </div>
+
+            <button type="submit" class="btn-submit">Update Shopping Item</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

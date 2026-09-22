@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Yate Fam</title>
+    <link href="https://i.ibb.co/vxwxYx1/fam-Base-Icon.png" rel="icon" type="image/x-icon">
+
+    <style>
+        :root {
+            --primary-dark: #401F3E;
+            --primary-color: #732f65;
+            --card-bg: rgb(255, 232, 230);
+            --accent-bg: rgba(115, 47, 101, 0.68);
+            --text-main: #401F3E;
+            --text-muted: #5A4B51;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+            --shadow-subtle: 0 4px 12px rgba(64, 31, 62, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+            color: var(--primary-color);
+            background: radial-gradient(circle, rgba(236, 205, 205, 1) 25%, rgba(186, 112, 182, 1) 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+
+        header {
+            width: 100%;
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            background: radial-gradient(circle, rgba(236, 205, 205, 0.9) 8%, rgba(186, 112, 182, 0.9) 100%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .home-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-subtle);
+            transition: transform 0.2s;
+        }
+
+        .home-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .home-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .brand-logo img {
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            background-color: var(--card-bg);
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--primary-dark);
+            box-shadow: var(--shadow-subtle);
+            transition: background 0.2s;
+        }
+
+        .nav-link:hover {
+            background-color: #ffd4d1;
+        }
+
+        .dashboard-container {
+            display: grid;
+            /*grid-template-columns: 2fr 1fr;*/
+            gap: 24px;
+            padding: 24px;
+            max-width: 1400px;
+            /*justify-content: center;*/
+            width: 100%;
+            margin: 0 auto;
+            flex: 1;
+        }
+
+        .main-content {
+            display: flex;
+            /*grid-template-columns: 2fr 1fr;*/
+            flex-direction: column;
+            gap: 24px;
+            place-items: center;
+        }
+
+        .top-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .bottom-row {
+            width: 100%;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(98, 68, 91, 0.2);
+        }
+
+        .card-title a:hover {
+            opacity: 0.8;
+        }
+
+
+        .calendar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        table {
+            border-spacing: 4px;
+            width: 100%;
+        }
+
+        th, td {
+            text-align: center;
+            font-size: 0.9rem;
+            width: 36px;
+            height: 36px;
+        }
+
+        .dateCell {
+            border-radius: 50%;
+            user-select: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .dateCell:hover {
+            background-color: rgba(98, 68, 91, 0.1);
+        }
+
+        #currentTr td {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        #prev, #next {
+            cursor: pointer;
+            color: var(--primary-dark);
+        }
+
+        #prev:hover, #next:hover {
+            text-decoration: underline;
+        }
+
+        .btn-action {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:disabled {
+            background-color: rgba(152, 59, 131, 0.56);
+            cursor: not-allowed;
+        }
+
+        .btn-action:not(:disabled):hover {
+            opacity: 0.9;
+        }
+
+
+        .scrollable-list {
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .scrollable-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollable-list::-webkit-scrollbar-thumb {
+            background-color: rgba(98, 68, 91, 0.2);
+            border-radius: 10px;
+        }
+
+        #square-before-task {
+            width: 35px;
+            height: 35px;
+            margin: 0 12px 0 0;
+            border-radius: 10px;
+            background-color: rgba(170, 52, 165, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        li {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .task-details {
+            flex-grow: 1;
+        }
+
+        li .bold {
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+            margin-left: auto;
+            padding-left: 10px;
+        }
+
+
+        .family-member {
+            align-items: center;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 150px;
+            height: 150px;
+            background-color: #E6E0E4;
+            border-radius: 70%;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar img {
+            width: 150px;
+            height: 150px;
+            border-radius: 70%;
+        }
+
+        .input-container {
+            width: 100%;
+            background-color: var(--accent-bg);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            color: #ECCDCD;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-container h4 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-container input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+
+        @media (max-width: 900px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+
+            .top-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        #change-username-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #user-username {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #user-username p {
+            padding: 5px;
+            font-size: 110%;
+        }
+
+        .member-card-attribute-text {
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        #change-username-button {
+            background-color: rgba(152, 59, 131, 0.56);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            width: 60%;
+            font-size: 80%;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <a href="/" th:if="${#authorization.expression('isAuthenticated()')}">
+            <div class="home-btn">
+                <img alt="Home" src="https://i.ibb.co/5TR58kn/home.png">
+            </div>
+        </a>
+        <div class="brand-logo">
+            <img alt="FamBase Logo" src="https://i.ibb.co/Vvp7kp1/famge-removebg-preview.png">
+        </div>
+    </div>
+
+    <div class="header-right">
+        <a class="nav-link" href="/login" th:if="${#authorization.expression('!isAuthenticated()')}">Login</a>
+        <a class="nav-link" href="/register" th:if="${#authorization.expression('!isAuthenticated()')}">Register</a>
+        <a class="nav-link" href="/logout" th:if="${#authorization.expression('isAuthenticated()')}">Logout</a>
+    </div>
+</header>
+
+<div class="dashboard-container">
+
+    <div class="main-content">
+        <div class="top-row">
+            <section class="card" id="events">
+                <div class="card-title">
+                    <a href="events/allevents" th:if="${#authorization.expression('isAuthenticated()')}">Events</a>
+                </div>
+                <div class="calendar-wrapper">
+                    <table>
+                        <tr id="currentTr">
+                            <td id="prev">Prev</td>
+                            <td colspan="5" id="month">May</td>
+                            <td id="next">Next</td>
+                        </tr>
+                        <tr class="dayRow">
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                        </tr>
+                        <tr class="dayRow">
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                        </tr>
+                        <tr class="dayRow">
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                        </tr>
+                        <tr class="dayRow">
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                        </tr>
+                        <tr class="dayRow">
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                        </tr>
+                        <tr class="dayRow">
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                            <td class="dateCell"></td>
+                        </tr>
+                    </table>
+                    <a id="addEventLink">
+                        <button class="btn-action" disabled="true" id="addEventButton">Add Event</button>
+                    </a>
+                </div>
+            </section>
+
+
+            <section class="card" id="chores">
+                <div class="card-title">
+                    <a href="tasks/alltasks" th:if="${#authorization.expression('isAuthenticated()')}">Your Tasks</a>
+                </div>
+                <div class="scrollable-list">
+                    <ul>
+                        <li th:each="task : ${tasks}">
+                            <div id="square-before-task">
+                                <span class="bold" th:if="${task.status}">✅</span>
+                                <span class="bold" th:if="${!task.status}">❌</span>
+                            </div>
+                            <div class="task-details">
+                                <span class="bold" th:text="${task.name}"></span>,
+                                Deadline: <span class="bold" th:text="${task.deadline}"></span>,
+                                Importance: <span class="bold" th:text="${task.importance}"></span>
+                            </div>
+                            <div class="item-actions">
+                                <a th:href="@{/tasks/edit/{id}(id=${task.id})}">✎</a>
+                                <a th:href="@{|/tasks/delete?id=${task.id}|}">🗑️</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="card family-member">
+                <div class="card-title">
+                    <a>Family Member</a>
+                </div>
+                <div class="avatar">
+                    <img th:src="${currentAvatar.address}">
+                </div>
+
+                <div id="change-username-container">
+                    <div id="user-username">
+                        <p class="member-card-attribute-text">Username:</p>
+                        <p th:text="${currentUser.getUsername()}"></p>
+                    </div>
+
+                    <div id="change-username-button">
+                        <a th:href="@{/change-username}">Change username</a>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+        <div class="bottom-row">
+            <section class="card" id="shopping-list">
+                <div class="card-title">
+                    <a href="shoppingItems/allshoppingItems" th:if="${#authorization.expression('isAuthenticated()')}">Your
+                        Shopping List</a>
+                </div>
+                <div class="scrollable-list">
+                    <ul>
+                        <li th:each="shoppingItem : ${shoppingItems}">
+                            <div>
+                                <span class="bold" th:text="${shoppingItem.user.getUsername()}"></span>:
+                                <span class="bold" th:text="${shoppingItem.name}"></span>,
+                                Quantity: <span class="bold" th:text="${shoppingItem.quantity}"></span>,
+                                Store: <span class="bold" th:text="${shoppingItem.store}"></span>,
+                                Importance: <span class="bold" th:text="${shoppingItem.importance}"></span>,
+                                <span class="bold" th:if="${shoppingItem.status}">✅</span>
+                                <span class="bold" th:if="${!shoppingItem.status}">❌</span>
+                            </div>
+                            <div class="item-actions">
+                                <a th:href="@{/shoppingItems/edit/{id}(id=${shoppingItem.id})}">✎</a>
+                                <a th:href="@{|/shoppingItems/delete?id=${shoppingItem.id}|}">🗑️</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+</div>
+
+
+<script th:inline="javascript">
+    // 1. DATA FROM SPRING
+    const events = [[${events}]];
+
+    const cells = document.querySelectorAll(".dateCell");
+    const monthLabel = document.getElementById("month");
+    const addEventButton = document.getElementById("addEventButton");
+    const addEventLink = document.getElementById("addEventLink");
+
+    let displayedDate = new Date();
+
+    let startDate = null;
+    let endDate = null;
+
+    // 2. DATE HELPERS
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+
+    function sameDay(date1, date2) {
+        return formatDate(date1) === formatDate(date2);
+    }
+
+
+    function isBetween(date, start, end) {
+        return date >= start && date <= end;
+    }
+
+
+    // 3. EVENTS
+    function getEventsForDate(date) {
+        const dateString = formatDate(date);
+        return events.filter(event =>
+            dateString >= event.startDate &&
+            dateString <= event.endDate
+        );
+    }
+
+    // 4. RENDER CALENDAR
+    function renderCalendar() {
+
+        const year = displayedDate.getFullYear();
+        const month = displayedDate.getMonth();
+
+        const firstDay = new Date(year, month, 1).getDay();
+
+        const daysInMonth =
+            new Date(year, month + 1, 0).getDate();
+
+
+        monthLabel.textContent =
+            displayedDate.toLocaleString("default", {
+                month: "long",
+                year: "numeric"
+            });
+
+
+        // Clear old month
+        cells.forEach(cell => {
+            cell.innerHTML = "";
+            cell.style = "";
+            cell.onclick = null;
+        });
+
+
+        // Create current month
+        for (let day = 1; day <= daysInMonth; day++) {
+
+            const cell = cells[firstDay + day - 1];
+
+            const cellDate = new Date(year, month, day);
+
+            cell.textContent = day;
+            cell.style.cursor = "pointer";
+
+
+            // Existing events lookup for tooltips only (no coloring)
+            const dayEvents = getEventsForDate(cellDate);
+
+            // Hover -> show event names
+            if (dayEvents.length > 0) {
+                cell.title = dayEvents
+                    .map(event => event.name)
+                    .join("\n");
+            }
+
+
+            // Selected dates
+            if (
+                startDate &&
+                (
+                    sameDay(cellDate, startDate) ||
+                    (endDate && isBetween(cellDate, startDate, endDate))
+                )
+            ) {
+                cell.style.backgroundColor = "rgb(126, 90, 90)";
+                cell.style.color = "white";
+            }
+
+
+            // Clicking a date
+            cell.onclick = () => selectDate(cellDate);
+        }
+    }
+
+    // 5. SELECT DATE RANGE
+    function selectDate(date) {
+
+        // Nothing selected yet
+        if (startDate === null) {
+
+            startDate = date;
+            endDate = null;
+
+        }
+
+        // Start exists, choose end
+        else if (endDate === null) {
+
+            if (date < startDate) {
+                endDate = startDate;
+                startDate = date;
+            } else {
+                endDate = date;
+            }
+        }
+
+        // Range already selected -> start over
+        else {
+
+            startDate = date;
+            endDate = null;
+        }
+
+        updateAddEventButton();
+        renderCalendar();
+    }
+
+
+    // 6. ADD EVENT BUTTON
+    function updateAddEventButton() {
+
+        if (startDate === null) {
+
+            addEventButton.disabled = true;
+            addEventLink.removeAttribute("href");
+            return;
+        }
+
+
+        // Clicking one day means a one-day event
+        const finalEndDate = endDate ?? startDate;
+
+        const start = formatDate(startDate);
+        const end = formatDate(finalEndDate);
+
+
+        addEventLink.href =
+            `/events/new?startDate=${start}&endDate=${end}`;
+
+        addEventButton.disabled = false;
+    }
+
+    // 7. PREVIOUS / NEXT MONTH
+    document.getElementById("next").onclick = () => {
+
+        displayedDate.setMonth(
+            displayedDate.getMonth() + 1
+        );
+
+        renderCalendar();
+    };
+
+
+    document.getElementById("prev").onclick = () => {
+
+        displayedDate.setMonth(
+            displayedDate.getMonth() - 1
+        );
+
+        renderCalendar();
+    };
+
+    renderCalendar();
+
+</script>
+</body>
+</html>

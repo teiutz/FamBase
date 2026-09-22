@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <title>Home page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            color: #401F3E;
+            font-weight: bold;
+            user-select: none;
+            font-family: Arial, Helvetica, sans-serif;
+            background: radial-gradient(circle, rgba(247, 238, 238, 1) 8%, rgba(240, 172, 237, 1) 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        a {
+            text-decoration: none;
+            color: #401F3E;
+        }
+
+        #header {
+            display: flex;
+            height: 100px;
+            background: radial-gradient(circle, rgba(236, 205, 205, 1) 8%, rgba(186, 112, 182, 1) 100%);
+            border-bottom-left-radius: 0px;
+            border-bottom-right-radius: 0px;
+            position: relative;
+            width: 100%;
+        }
+
+        .headerDiv {
+            width: 90px;
+            height: 40px;
+            border-radius: 10px;
+            border: 0px rgba(0, 0, 0, 0.25) solid;
+            padding: 7.5px;
+            font-size: 24px;
+            color: #401F3E;
+            position: relative;
+            transform: translateY(-50%);
+            top: 43%;
+            text-align: center;
+            margin: 5px;
+            display: block;
+        }
+
+        #homeButtonDiv {
+            left: 13px;
+            width: 45px;
+            border-radius: 50%;
+        }
+
+        #homeButton {
+            width: 45px;
+            height: 45px;
+            position: relative;
+            top: -2px;
+        }
+
+        verticallyCentered {
+            position: relative;
+            transform: translateY(-50%);
+            display: block;
+            top: 50%;
+        }
+
+        #famBaseImage {
+            transform: translateX(-50%);
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            width: 225px;
+            border-radius: 20px;
+        }
+
+        #accountConnection {
+            display: flex;
+            transform: translateX(-100%);
+            left: 99.5%;
+            position: absolute;
+            height: 10.8vh;
+        }
+
+        #happyFamilyImage {
+            width: 350px;
+            max-width: 40vw;
+            margin: 15px;
+            left: 50%;
+            bottom: 20px;
+            z-index: -1;
+            transform: translateX(-50%);
+            height: auto;
+            position: absolute;
+            top: 33%;
+        }
+
+        #page {
+            position: relative;
+            width: 100%;
+        }
+
+        #actions {
+            display: flex;
+            position: absolute;
+            transform: translateX(-50%);
+            left: 50%;
+            top: 22%;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 45px;
+            padding: 0 40px;
+            height: 89.2vh;
+        }
+
+        .action {
+            margin: 0 15px;
+            text-align: center;
+        }
+
+        .action img {
+            width: 180px;
+            transform: translateX(-50%);
+            position: relative;
+            left: 50%;
+            height: auto;
+            display: block;
+            margin: 0 auto 10px auto;
+        }
+
+        .action:nth-of-type(2) img {
+            top: -15px;
+            margin-bottom: 7px;
+        }
+
+        .action:nth-of-type(3) img {
+            margin-bottom: 13px;
+        }
+
+        .action a {
+            width: 160px;
+            display: block;
+        }
+
+        .action span {
+            position: relative;
+            top: -30px;
+            display: block;
+            width: 220px;
+            font-size: 18px;
+            transform: translateX(-50%);
+            left: 54%;
+            text-align: center;
+            text-decoration: none;
+            color: #401F3E;
+        }
+
+        .action:nth-of-type(1) span {
+            position: relative;
+            top: -10px;
+        }
+
+        .action:nth-of-type(4) span {
+            position: relative;
+            top: -24px;
+        }
+
+        .bold {
+            font-weight: bolder;
+        }
+    </style>
+</head>
+<body>
+<div id="header">
+    <a href="/" th:if="${#authorization.expression('isAuthenticated()')}">
+        <div class="headerDiv" id="homeButtonDiv"><img id="homeButton" src="https://i.ibb.co/5TR58kn/home.png"></div>
+    </a>
+    <a href="/"><img id="famBaseImage" src="https://i.ibb.co/Vvp7kp1/famge-removebg-preview.png"></a>
+    <div id="accountConnection">
+        <a href="/login" th:if="${#authorization.expression('!isAuthenticated()')}"><div class="headerDiv"><verticallyCentered>Login</verticallyCentered></div></a>
+        <a href="/register" th:if="${#authorization.expression('!isAuthenticated()')}"><div class="headerDiv"><verticallyCentered>Register</verticallyCentered></div></a>
+        <a href="/logout" th:if="${#authorization.expression('isAuthenticated()')}"><div class="headerDiv"><verticallyCentered>Logout</verticallyCentered></div></a>
+    </div>
+</div>
+<h1 style="text-align: center; font-size: 50px;" th:if="${#authorization.expression('!isAuthenticated()')}">Welcome to FamBase!</h1>
+<h1 style="text-align: center; font-size: 35px;" th:if="${#authorization.expression('!isAuthenticated()')}">Create an account or login into an existing one!</h1>
+
+<div id="page" th:if="${#authorization.expression('isAuthenticated()')}">
+    <h1 style="text-align: center; font-size: 40px; margin-bottom: 20px;">Start planning your family activities!</h1>
+    <div id="actions">
+        <div class="action">
+            <a href="/tasks/new">
+                <img src="https://i.ibb.co/74KGZD9/task.png">
+                <span>Add new task</span>
+            </a>
+        </div>
+        <div class="action">
+            <a href="/shoppingItems/new">
+                <img src="https://i.ibb.co/HgjR8pc/shopping-item.png">
+                <span>Add new shopping item</span>
+            </a>
+        </div>
+        <div class="action">
+            <a href="/events/new">
+                <img src="https://i.ibb.co/Npy0z3J/event.png">
+                <span>Add new event</span>
+            </a>
+        </div>
+        <div class="action" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+            <a href="/admin" th:if="${#authorization.expression('isAuthenticated()')}">
+                <img src="https://i.ibb.co/yNKC6SY/add-user.png">
+                <span>Add user to family</span>
+            </a>
+        </div>
+        <div class="action">
+            <a href="/all" th:if="${#authorization.expression('isAuthenticated()')}">
+                <img src="https://i.ibb.co/pwqHFsD/dashboard.png">
+                <span>Family Dashboard</span>
+            </a>
+        </div>
+        <div class="action">
+            <a href="/family" th:if="${#authorization.expression('isAuthenticated()')}">
+                <img src="https://i.ibb.co/qqq1gBJ/Untitled-design-5-removebg-preview.png">
+                <span>See family members</span>
+            </a>
+        </div>
+    </div>
+</div>
+<img id="happyFamilyImage" src="https://i.ibb.co/gZDWSy5/imeeage.png">
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" th:href="@{/style.css}"/>
+    <title>Family Members</title>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+</head>
+<body>
+<div id="header">
+    <a href="/" th:if="${#authorization.expression('isAuthenticated()')}">
+        <div class="headerDiv" id="homeButtonDiv"><img id="homeButton" src="https://i.ibb.co/5TR58kn/home.png"></div>
+    </a>
+    <a href="/"><img id="famBaseImage" src="https://i.ibb.co/Vvp7kp1/famge-removebg-preview.png"></a>
+    <div id="accountConnection">
+        <a href="/login" th:if="${#authorization.expression('!isAuthenticated()')}">
+            <div class="headerDiv">
+                <verticallyCentered>Login</verticallyCentered>
+            </div>
+        </a>
+        <a href="/register" th:if="${#authorization.expression('!isAuthenticated()')}">
+            <div class="headerDiv">
+                <verticallyCentered>Register</verticallyCentered>
+            </div>
+        </a>
+        <a href="/logout" th:if="${#authorization.expression('isAuthenticated()')}">
+            <div class="headerDiv">
+                <verticallyCentered>Logout</verticallyCentered>
+            </div>
+        </a>
+    </div>
+</div>
+
+<div id="membersContainer">
+    <h1>Family Members</h1>
+
+    <div id="membersList">
+
+        <div class="no-members" th:if="${#lists.isEmpty(familyMembers)}">
+            <p>No other family members found.</p>
+        </div>
+
+
+        <div class="member-card" th:each="member : ${familyMembers}">
+            <div class="member-info">
+
+                <div class="member-avatar">
+                    <img th:src="${member.getAvatarImage().address}">
+                </div>
+
+                <div class="member-name">
+                    <span th:text="${member.username}">Username</span>
+                    <p th:if="${member.isAdmin()}">- admin</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        color: rgb(98, 68, 91);
+        background: radial-gradient(circle, rgba(247, 238, 238, 1) 8%, rgba(240, 172, 237, 1) 100%);
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    #header {
+        display: flex;
+        height: 100px;
+        background: radial-gradient(circle, rgba(236, 205, 205, 1) 8%, rgba(186, 112, 182, 1) 100%);
+        border-bottom-left-radius: 0px;
+        border-bottom-right-radius: 0px;
+        position: relative;
+        width: 100%;
+    }
+
+    .headerDiv {
+        width: 90px;
+        height: 40px;
+        border-radius: 10px;
+        border: 0px rgba(0, 0, 0, 0.25) solid;
+        padding: 7.5px;
+        font-size: 24px;
+        color: #401F3E;
+        position: relative;
+        transform: translateY(-50%);
+        top: 43%;
+        text-align: center;
+        margin: 5px;
+        display: block;
+    }
+
+    #homeButtonDiv {
+        left: 13px;
+        width: 45px;
+        border-radius: 50%;
+    }
+
+    #homeButton {
+        width: 45px;
+        height: 45px;
+        position: relative;
+        top: -2px;
+    }
+
+    verticallyCentered {
+        position: relative;
+        transform: translateY(-50%);
+        display: block;
+        top: 50%;
+    }
+
+    #famBaseImage {
+        transform: translateX(-50%);
+        position: absolute;
+        top: -30px;
+        left: 50%;
+        width: 225px;
+        border-radius: 20px;
+    }
+
+    #accountConnection {
+        display: flex;
+        transform: translateX(-100%);
+        left: 99.5%;
+        position: absolute;
+        height: 100px;
+    }
+
+    /* Styled Container matching your #formBody card design */
+    #membersContainer {
+        width: 400px;
+        background-color: aliceblue;
+        border-radius: 20px;
+        margin: 40px auto 0 auto;
+        padding: 20px 30px 30px 30px;
+        box-shadow: 0 4px 12px rgba(64, 31, 62, 0.15);
+        position: relative;
+        box-sizing: border-box;
+    }
+
+    h1 {
+        text-align: center;
+        padding-top: 10px;
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #401F3E;
+    }
+
+    #membersList {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .member-card {
+        background-color: #ffffff;
+        padding: 12px 18px;
+        border-radius: 10px;
+        border: 1px solid rgba(186, 112, 182, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 5px rgba(64, 31, 62, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .member-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(64, 31, 62, 0.1);
+    }
+
+    .member-info{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+    }
+
+    .member-name {
+        font-weight: bold;
+        font-size: 18px;
+        color: #401F3E;
+        padding: 5px;
+    }
+
+    .member-name p {
+        color: #967a95;
+    }
+
+    .no-members {
+        text-align: center;
+        color: #777;
+        font-style: italic;
+        padding: 15px;
+    }
+
+    .member-avatar img{
+        width: 55px;
+        margin-right: 50px;
+        border-radius: 30px;
+    }
+</style>
+</html>
